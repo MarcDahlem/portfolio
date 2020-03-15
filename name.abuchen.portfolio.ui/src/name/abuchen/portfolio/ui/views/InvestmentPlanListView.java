@@ -104,6 +104,10 @@ public class InvestmentPlanListView extends AbstractListView implements Modifica
             manager.add(new OpenDialogAction(this, Messages.InvestmentPlanTypeDeposit) //
                             .type(InvestmentPlanDialog.class) //
                             .parameters(AccountTransaction.class));
+            
+            manager.add(new OpenDialogAction(this, Messages.InvestmentPlanTypeAccountTransfer) //
+                            .type(InvestmentPlanDialog.class) //
+                            .parameters(AccountTransaction.class));
         }));
     }
 
