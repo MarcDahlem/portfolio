@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import name.abuchen.portfolio.model.Account;
+import name.abuchen.portfolio.model.AccountTransaction;
 import name.abuchen.portfolio.model.Client;
 import name.abuchen.portfolio.model.InvestmentPlan;
 import name.abuchen.portfolio.model.Portfolio;
@@ -42,7 +43,7 @@ import name.abuchen.portfolio.ui.util.DatePicker;
 import name.abuchen.portfolio.ui.util.FormDataFactory;
 import name.abuchen.portfolio.ui.util.SimpleDateTimeDateSelectionProperty;
 
-public class InvestmentPlanDialog extends AbstractTransactionDialog
+public abstract class InvestmentPlanDialog extends AbstractTransactionDialog
 {
     private Client client;
 
@@ -113,6 +114,15 @@ public class InvestmentPlanDialog extends AbstractTransactionDialog
         account.value.setInput(accounts);
         account.bindValue(Properties.account.name(), Messages.MsgMissingAccount);
         account.bindCurrency(Properties.accountCurrencyCode.name());
+        
+        ComboInput account2 = null;
+        if (planType == AccountTransaction.class) {
+            account2 = new ComboInput(editArea, Messages.ColumnAccount);
+            List<Account> accounts2 = including(client.getActiveAccounts(), model().getAccount());
+            account2.value.setInput(accounts2);
+            account2.bindValue(Properties.account.name(), Messages.MsgMissingAccount);
+            account2.bindCurrency(Properties.accountCurrencyCode.name());
+        }
 
         // auto-generate
 
@@ -188,8 +198,15 @@ public class InvestmentPlanDialog extends AbstractTransactionDialog
         }
 
         factory = factory.thenBelow(account.value.getControl()).label(account.label)
-                        .suffix(account.currency, currencyWidth) //
-                        .thenBelow(labelAutoGenerate, 10) //
+                        .suffix(account.currency, currencyWidth);
+        
+        if (account2 != null) {
+            factory = factory.thenBelow(account2.value.getControl()).label(account2.label)
+                            .suffix(account2.currency, currencyWidth);
+
+        }
+        
+        factory = factory.thenBelow(labelAutoGenerate, 10) //
                         .thenBelow(valueDate.getControl(), 10).label(lblDate) //
                         .thenBelow(amount.value, 10).width(amountWidth).label(amount.label)
                         .suffix(amount.currency, currencyWidth);
