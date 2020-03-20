@@ -648,6 +648,40 @@ public class SecurityListView extends AbstractListView implements ModificationLi
         new DateEditingSupport(SecurityPrice.class, "date").addListener(this).attachTo(column); //$NON-NLS-1$
         support.addColumn(column);
 
+        column = new Column(Messages.ColumnDaysHigh, SWT.RIGHT, 200);
+        column.setLabelProvider(new ColumnLabelProvider()
+        {
+            @Override
+            public String getText(Object element)
+            {
+                Security security = (Security) prices.getData(Security.class.toString());
+                SecurityPrice price = (SecurityPrice) element;
+                
+                return Values.Quote.format(security.getCurrencyCode(), price.getHighValue(), getClient().getBaseCurrency());
+            }
+        });
+        ColumnViewerSorter.create(SecurityPrice.class, "highValue").attachTo(column); //$NON-NLS-1$
+        new ValueEditingSupport(SecurityPrice.class, "highValue", Values.Quote, number -> number.longValue() != 0) //$NON-NLS-1$
+                        .addListener(this).attachTo(column);
+        support.addColumn(column);
+        
+        column = new Column(Messages.ColumnDaysLow, SWT.RIGHT, 80);
+        column.setLabelProvider(new ColumnLabelProvider()
+        {
+            @Override
+            public String getText(Object element)
+            {
+                Security security = (Security) prices.getData(Security.class.toString());
+                SecurityPrice price = (SecurityPrice) element;
+                
+                return Values.Quote.format(security.getCurrencyCode(), price.getLowValue(), getClient().getBaseCurrency());
+            }
+        });
+        ColumnViewerSorter.create(SecurityPrice.class, "lowValue").attachTo(column); //$NON-NLS-1$
+        new ValueEditingSupport(SecurityPrice.class, "lowValue", Values.Quote, number -> number.longValue() != 0) //$NON-NLS-1$
+                        .addListener(this).attachTo(column);
+        support.addColumn(column);
+        
         column = new Column(Messages.ColumnQuote, SWT.RIGHT, 80);
         column.setLabelProvider(new ColumnLabelProvider()
         {
@@ -656,6 +690,7 @@ public class SecurityListView extends AbstractListView implements ModificationLi
             {
                 Security security = (Security) prices.getData(Security.class.toString());
                 SecurityPrice price = (SecurityPrice) element;
+                
                 return Values.Quote.format(security.getCurrencyCode(), price.getValue(), getClient().getBaseCurrency());
             }
         });
