@@ -48,6 +48,7 @@ import name.abuchen.portfolio.model.Account;
 import name.abuchen.portfolio.model.AccountTransaction;
 import name.abuchen.portfolio.model.BuySellEntry;
 import name.abuchen.portfolio.model.Client;
+import name.abuchen.portfolio.model.LatestSecurityPrice;
 import name.abuchen.portfolio.model.Portfolio;
 import name.abuchen.portfolio.model.PortfolioTransaction;
 import name.abuchen.portfolio.model.PortfolioTransferEntry;
@@ -606,7 +607,7 @@ public class SecurityListView extends AbstractListView implements ModificationLi
 
         prices = new TableViewer(container, SWT.FULL_SELECTION | SWT.MULTI);
         ColumnEditingSupport.prepare(prices);
-        ShowHideColumnHelper support = new ShowHideColumnHelper(SecurityListView.class.getSimpleName() + "@prices", //$NON-NLS-1$
+        ShowHideColumnHelper support = new ShowHideColumnHelper(SecurityListView.class.getSimpleName() + "@prices2", //$NON-NLS-1$
                         getPreferenceStore(), prices, layout);
 
         Column column = new Column(Messages.ColumnDate, SWT.None, 80);
@@ -648,20 +649,19 @@ public class SecurityListView extends AbstractListView implements ModificationLi
         new DateEditingSupport(SecurityPrice.class, "date").addListener(this).attachTo(column); //$NON-NLS-1$
         support.addColumn(column);
 
-        column = new Column(Messages.ColumnDaysHigh, SWT.RIGHT, 200);
+        column = new Column(Messages.ColumnDaysHigh, SWT.RIGHT, 80);
         column.setLabelProvider(new ColumnLabelProvider()
         {
             @Override
             public String getText(Object element)
             {
                 Security security = (Security) prices.getData(Security.class.toString());
-                SecurityPrice price = (SecurityPrice) element;
-                
-                return Values.Quote.format(security.getCurrencyCode(), price.getHighValue(), getClient().getBaseCurrency());
+                LatestSecurityPrice latestPrice = element instanceof LatestSecurityPrice ? (LatestSecurityPrice)element : null; 
+                return latestPrice != null ? Values.Quote.format(security.getCurrencyCode(), latestPrice.getHigh(), getClient().getBaseCurrency()):"N/A";
             }
         });
-        ColumnViewerSorter.create(SecurityPrice.class, "highValue").attachTo(column); //$NON-NLS-1$
-        new ValueEditingSupport(SecurityPrice.class, "highValue", Values.Quote, number -> number.longValue() != 0) //$NON-NLS-1$
+        ColumnViewerSorter.create(LatestSecurityPrice.class, "high").attachTo(column); //$NON-NLS-1$
+        new ValueEditingSupport(LatestSecurityPrice.class, "high", Values.Quote, number -> number.longValue() != 0) //$NON-NLS-1$
                         .addListener(this).attachTo(column);
         support.addColumn(column);
         
@@ -672,13 +672,12 @@ public class SecurityListView extends AbstractListView implements ModificationLi
             public String getText(Object element)
             {
                 Security security = (Security) prices.getData(Security.class.toString());
-                SecurityPrice price = (SecurityPrice) element;
-                
-                return Values.Quote.format(security.getCurrencyCode(), price.getLowValue(), getClient().getBaseCurrency());
+                LatestSecurityPrice latestPrice = element instanceof LatestSecurityPrice ? (LatestSecurityPrice)element : null;
+                return latestPrice != null ? Values.Quote.format(security.getCurrencyCode(), latestPrice.getLow(), getClient().getBaseCurrency()):"N/A";
             }
         });
-        ColumnViewerSorter.create(SecurityPrice.class, "lowValue").attachTo(column); //$NON-NLS-1$
-        new ValueEditingSupport(SecurityPrice.class, "lowValue", Values.Quote, number -> number.longValue() != 0) //$NON-NLS-1$
+        ColumnViewerSorter.create(LatestSecurityPrice.class, "low").attachTo(column); //$NON-NLS-1$
+        new ValueEditingSupport(LatestSecurityPrice.class, "low", Values.Quote, number -> number.longValue() != 0) //$NON-NLS-1$
                         .addListener(this).attachTo(column);
         support.addColumn(column);
         

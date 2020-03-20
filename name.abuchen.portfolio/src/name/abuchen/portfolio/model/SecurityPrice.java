@@ -65,7 +65,6 @@ public class SecurityPrice implements Comparable<SecurityPrice>
         int result = 1;
         result = prime * result + ((date == null) ? 0 : date.hashCode());
         result = prime * result + (int) (value ^ (value >>> 32));
-        // TODO
         return result;
     }
 
@@ -89,7 +88,6 @@ public class SecurityPrice implements Comparable<SecurityPrice>
         if (value != other.value)
             return false;
         
-        // TODO
         return true;
     }
 
@@ -98,29 +96,5 @@ public class SecurityPrice implements Comparable<SecurityPrice>
     public String toString()
     {
         return String.format("%tF: %,10.2f", date, value / Values.Quote.divider());
-        // TODO
     }
-
-    public long getHighValue()
-    {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-    
-    public void setHighValue(long highValue)
-    {
-     // TODO
-    }
-    
-    public long getLowValue()
-    {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-    
-    public void setLowValue(long lowValue)
-    {
-     // TODO
-    }
-
 }
